@@ -1,0 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+@import "tailwindcss";
+
+@plugin "daisyui" {
+  themes: all;
+}
+
+@layer base {
+  body {
+    font-family: 'Inter', sans-serif;
+    /* Removed explicit background and text color applies here */
+  }
+}
+
+.container {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
