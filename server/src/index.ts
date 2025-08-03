@@ -8,8 +8,6 @@ import contactRoutes from './routes/contact';
 import uploadRoutes from './routes/upload';
 import userRoutes from './routes/user';
 import projectRoutes from './routes/projects';
-import User from './models/user'; // Import User model
-import bcrypt from 'bcryptjs'; // Import bcrypt
 
 dotenv.config();
 

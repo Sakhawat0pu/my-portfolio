@@ -12,7 +12,7 @@ const userSchema = new mongoose.Schema({
 	state: { type: String },
 	country: { type: String },
 	profilePicture: { type: String },
-	aboutImage: { type: String },
+	aboutImage: { type: Buffer },
 });
 
 const User = mongoose.model("User", userSchema);

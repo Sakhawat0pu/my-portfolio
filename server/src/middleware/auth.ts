@@ -15,7 +15,7 @@ const auth = async (req: CustomRequest, res: Response, next: NextFunction) => {
     req.userId = decodedData.id;
 
     next();
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Authentication error:", error);
     return res.status(401).json({ message: 'Invalid or expired token' });
   }
@@ -29,7 +29,7 @@ export const isAdmin = async (req: CustomRequest, res: Response, next: NextFunct
     } else {
       res.status(403).json({ message: 'Admin access required' });
     }
-  } catch (error) {
+  } catch (error: unknown) {
     res.status(500).json({ message: 'Server error' });
   }
 };

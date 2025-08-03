@@ -122,7 +122,7 @@ export const changePassword = async (req: CustomRequest, res: Response) => {
 		await user.save();
 
 		res.status(200).json({ message: "Password changed successfully" });
-	} catch {
+	} catch (_error: unknown) {
 		res.status(500).json({ message: "Something went wrong" });
 	}
 };
@@ -176,7 +176,7 @@ export const updateProfilePicture = async (req: CustomRequest, res: Response) =>
 		await user.save();
 
 		res.status(200).json({ result: user, message: "Profile picture updated successfully" });
-	} catch (error) {
+	} catch (_error: unknown) {
 		res.status(500).json({ message: "Something went wrong" });
 	}
 };
