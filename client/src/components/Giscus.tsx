@@ -1,40 +1,42 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from "react";
 
 const Giscus: React.FC = () => {
-  const ref = useRef<HTMLDivElement>(null);
+	const ref = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!ref.current) {
-      return;
-    }
+	useEffect(() => {
+		const currentRef = ref.current; // Capture ref.current
 
-    const script = document.createElement('script');
-    script.src = 'https://giscus.app/client.js';
-    script.async = true;
-    script.crossOrigin = 'anonymous';
+		// Prevent duplicate injection
+		if (!currentRef || currentRef.querySelector("iframe")) return;
 
-    script.setAttribute('data-repo', 'sakhawathossain/my-portfolio');
-    script.setAttribute('data-repo-id', 'R_kgDOMA-5-A');
-    script.setAttribute('data-category', 'Announcements');
-    script.setAttribute('data-category-id', 'DIC_kwDOMA-5-M4Ch924');
-    script.setAttribute('data-mapping', 'pathname');
-    script.setAttribute('data-strict', '0');
-    script.setAttribute('data-reactions-enabled', '1');
-    script.setAttribute('data-emit-metadata', '0');
-    script.setAttribute('data-input-position', 'bottom');
-    script.setAttribute('data-theme', 'light');
-    script.setAttribute('data-lang', 'en');
+		const script = document.createElement("script");
+		script.src = "https://giscus.app/client.js";
+		script.async = true;
+		script.crossOrigin = "anonymous";
 
-    ref.current.appendChild(script);
+		script.setAttribute("data-repo", "Sakhawat0pu/my-portfolio");
+		script.setAttribute("data-repo-id", "R_kgDOPRr8CQ");
+		script.setAttribute("data-category", "Announcements");
+		script.setAttribute("data-category-id", "DIC_kwDOPRr8Cc4CazZ1"); // Replace with your actual category ID
+		script.setAttribute("data-mapping", "pathname");
+		script.setAttribute("data-strict", "0");
+		script.setAttribute("data-reactions-enabled", "1");
+		script.setAttribute("data-emit-metadata", "0");
+		script.setAttribute("data-input-position", "bottom");
+		script.setAttribute("data-theme", "preferred_color_scheme");
+		script.setAttribute("data-lang", "en");
 
-    return () => {
-      if (ref.current) {
-        ref.current.innerHTML = '';
-      }
-    };
-  }, []);
+		currentRef.appendChild(script);
 
-  return <div ref={ref} />;
+		return () => {
+			// Clean up Giscus iframe if component unmounts
+			if (currentRef) {
+				currentRef.innerHTML = "";
+			}
+		};
+	}, []);
+
+	return <div ref={ref} />;
 };
 
 export default Giscus;

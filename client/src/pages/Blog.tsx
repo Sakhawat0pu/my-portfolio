@@ -44,12 +44,12 @@ const Blog: React.FC = () => {
 						<Link
 							to={`/blog/${post.slug}`}
 							key={post._id}
-							className="card bg-base-200 shadow-xl hover:shadow-2xl transition-shadow duration-300 transform hover:-translate-y-1"
+							className="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow duration-300 transform hover:-translate-y-1"
 						>
 							<figure className="h-48 w-full overflow-hidden">
 								{post.coverImage ? (
 									<img
-										src={post.coverImage}
+										src={post.coverImage as string}
 										alt={post.title}
 										className="w-full h-full object-cover"
 									/>

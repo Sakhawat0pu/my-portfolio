@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react"; // Added a comment to force recompile
+
 import type { Project } from "../../types";
 
 interface ProjectFormProps {
 	project: Project | null;
-	onSave: (project: Project) => void;
+	onSave: (project: Project, coverImageFile?: File | null) => void;
 	onCancel: () => void;
 }
 
@@ -23,6 +24,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
 				languages: project.languages || [],
 				frameworks: project.frameworks || [],
 				toolsUsed: project.toolsUsed || [],
+				coverImage: project.coverImage || "", // Add coverImage to state
 			};
 		} else {
 			return {
@@ -34,9 +36,11 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
 				languages: [],
 				frameworks: [],
 				toolsUsed: [],
+				coverImage: "", // Initialize coverImage
 			};
 		}
 	});
+	const [coverImageFile, setCoverImageFile] = useState<File | null>(null); // New state for the file
 
 	useEffect(() => {
 		if (project) {
@@ -49,7 +53,9 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
 				languages: project.languages || [],
 				frameworks: project.frameworks || [],
 				toolsUsed: project.toolsUsed || [],
+				coverImage: project.coverImage || "", // Set existing coverImage
 			});
+			setCoverImageFile(null); // Clear file input on project change
 		} else {
 			setFormData({
 				name: "",
@@ -60,7 +66,9 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
 				languages: [],
 				frameworks: [],
 				toolsUsed: [],
+				coverImage: "",
 			});
+			setCoverImageFile(null);
 		}
 	}, [project]);
 
@@ -68,6 +76,12 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
 		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
 	) => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
+	};
+
+	const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		if (e.target.files && e.target.files[0]) {
+			setCoverImageFile(e.target.files[0]);
+		}
 	};
 
 	const handleArrayChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -79,7 +93,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		onSave(formData as Project);
+		onSave(formData as Project, coverImageFile);
 	};
 
 	return (
@@ -115,6 +129,24 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
 							className="input input-bordered w-full"
 							required
 						/>
+					</div>
+					<div className="form-control">
+						<label className="label">
+							<span className="label-text font-medium">Cover Image</span>
+							<span className="label-text-alt">(Optional)</span>
+						</label>
+						<input
+							type="file"
+							name="coverImage"
+							onChange={handleFileChange}
+							className="file-input file-input-bordered w-full"
+							accept="image/*"
+						/>
+						{formData.coverImage && !coverImageFile && (
+							<p className="text-sm text-base-content/70 mt-2">
+								Current: <a href={`http://localhost:4000/${formData.coverImage}`} target="_blank" rel="noopener noreferrer" className="link link-primary">{formData.coverImage.split('/').pop()}</a>
+							</p>
+						)}
 					</div>
 					<div className="form-control">
 						<label className="label">

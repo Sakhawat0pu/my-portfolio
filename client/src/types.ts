@@ -5,11 +5,16 @@ export interface Post {
 	title: string;
 	slug: string;
 	content: string;
-	author?: string;
+	author?: {
+		firstName: string;
+		lastName: string;
+	};
 	tags?: string[];
 	coverImage?: string;
 	metaTitle?: string;
 	metaDescription?: string;
+	authorImage?: string;
+	authorBio?: string;
 	ogImage?: string;
 	status?: "draft" | "published";
 	publishDate?: string;
@@ -17,16 +22,17 @@ export interface Post {
 }
 
 export interface Project {
-  _id: string;
-  name: string;
-  description: string;
-  frontendRepo: string;
-  backendRepo?: string;
-  liveLink: string;
-  languages: string[];
-  frameworks: string[];
-  toolsUsed: string[];
-  createdAt?: string;
+	_id: string;
+	name: string;
+	description: string;
+	frontendRepo: string;
+	backendRepo?: string;
+	liveLink: string;
+	languages: string[];
+	frameworks: string[];
+	toolsUsed: string[];
+	coverImage?: string;
+	createdAt?: string;
 }
 
 export interface ContactMessage {

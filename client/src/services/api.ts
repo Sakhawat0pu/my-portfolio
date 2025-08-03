@@ -46,12 +46,16 @@ export const updateProfile = (
 ) => api.patch<User>("/auth/profile", formData);
 export const updateProfilePicture = (formData: { profilePicture: string }) =>
 	api.patch<User>("/auth/profile-picture", formData);
-export const updateAboutImage = (formData: { aboutImage: string }) =>
-	api.patch<User>("/user/about-image", formData);
+export const getAboutImage = () => api.get<{ image: string }>("/user/about/image");
+export const uploadAboutImage = (formData: FormData) =>
+	api.post<{ message: string }>("/user/about/image", formData, {
+		headers: {
+			"Content-Type": "multipart/form-data",
+		},
+	});
 
 // User
 export const getUser = (id: string) => api.get<User["result"]>(`/user/${id}`);
-export const getPublicProfile = () => api.get<User["result"]>('/user/public-profile');
 
 // Posts
 export const getBlogPosts = (userId?: string) =>
@@ -78,8 +82,8 @@ export const sendMessage = (message: ContactMessage) =>
 	api.post("/contact", message);
 
 // Upload
-export const uploadImage = (formData: FormData) =>
-	api.post<{ filePath: string }>("/upload", formData, {
+export const uploadImage = (postId: string, formData: FormData) =>
+	api.post<{ filePath: string }>(`/upload/${postId}`, formData, {
 		headers: {
 			"Content-Type": "multipart/form-data",
 		},

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { uploadImage } from "../services/api";
 
 interface Post {
 	_id: string;
@@ -19,7 +18,7 @@ interface Post {
 
 interface PostFormProps {
 	post: Post | null;
-	onSave: (post: Post) => void;
+	onSave: (post: Post, imageFile?: File) => void;
 }
 
 const PostForm: React.FC<PostFormProps> = ({ post, onSave }) => {
@@ -36,6 +35,7 @@ const PostForm: React.FC<PostFormProps> = ({ post, onSave }) => {
 		status: "draft",
 		publishDate: new Date().toISOString().split("T")[0],
 	});
+    const [imageFile, setImageFile] = useState<File | undefined>(undefined);
 
 	useEffect(() => {
 		if (post) {
@@ -64,7 +64,7 @@ const PostForm: React.FC<PostFormProps> = ({ post, onSave }) => {
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
-		onSave(formData);
+		onSave(formData, imageFile);
 	};
 
 	const handleChange = (
@@ -87,21 +87,12 @@ const PostForm: React.FC<PostFormProps> = ({ post, onSave }) => {
 	) => {
 		const file = event.target.files?.[0];
 		if (file) {
-			const uploadFormData = new FormData();
-			uploadFormData.append("image", file);
-			try {
-				const { data } = await uploadImage(uploadFormData);
-				const imageUrl = data.filePath;
-				setFormData({ ...formData, coverImage: imageUrl });
-			} catch (error) {
-				console.error("Error uploading cover image:", error);
-				const toast = document.createElement("div");
-				toast.className = "toast toast-top toast-center";
-				toast.innerHTML =
-					'<div class="alert alert-error"><span>Error uploading cover image.</span></div>';
-				document.body.appendChild(toast);
-				setTimeout(() => toast.remove(), 3000); // Remove toast after 3 seconds
-			}
+            setImageFile(file);
+			const reader = new FileReader();
+			reader.onloadend = () => {
+				setFormData({ ...formData, coverImage: reader.result as string });
+			};
+			reader.readAsDataURL(file);
 		}
 	};
 

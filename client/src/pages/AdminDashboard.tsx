@@ -20,7 +20,7 @@ import type { Project, Post } from "../types";
 
 interface PostFormProps {
 	post: Post | null;
-	onSave: (post: Post) => void;
+	onSave: (post: Post, coverImageFile?: File | null) => void;
 	onCancel: () => void;
 }
 
@@ -83,16 +83,26 @@ const AdminDashboard: React.FC = () => {
 		}
 	};
 
-	const handleSavePost = async (post: Post) => {
-		console.log("Saving post:", post);
+	const handleSavePost = async (post: Post, coverImageFile?: File | null) => {
+		const { coverImage, ...postData } = post;
+
 		try {
+			let savedPost;
 			if (currentPost) {
-				await updatePost(currentPost._id, post);
+				savedPost = await updatePost(currentPost._id, postData);
 				setAlert({ message: "Post updated successfully!", type: "success" });
 			} else {
-				await createPost(post);
+        const { _id, ...newPostData } = postData;
+				savedPost = await createPost(newPostData);
 				setAlert({ message: "Post created successfully!", type: "success" });
 			}
+
+			if (coverImageFile) {
+				const uploadFormData = new FormData();
+				uploadFormData.append("image", coverImageFile);
+				await uploadImage(savedPost.data._id, uploadFormData);
+			}
+
 			fetchPosts();
 			setCurrentPost(null);
 			setActiveTab("manage-posts");
@@ -300,6 +310,7 @@ const PostForm: React.FC<PostFormProps> = ({ post, onSave, onCancel }) => {
 		status: "draft",
 		publishDate: new Date().toISOString().split("T")[0],
 	});
+	const [coverImageFile, setCoverImageFile] = useState<File | null>(null); // Add coverImageFile state - confirmed
 
 	useEffect(() => {
 		if (post) {
@@ -324,11 +335,12 @@ const PostForm: React.FC<PostFormProps> = ({ post, onSave, onCancel }) => {
 				publishDate: new Date().toISOString().split("T")[0],
 			});
 		}
+		setCoverImageFile(null); // Clear file input on post change
 	}, [post]);
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
-		onSave(formData);
+		onSave(formData, coverImageFile);
 	};
 
 	const handleChange = (
@@ -346,25 +358,9 @@ const PostForm: React.FC<PostFormProps> = ({ post, onSave, onCancel }) => {
 		});
 	};
 
-	const handleCoverImageUpload = async (
-		e: React.ChangeEvent<HTMLInputElement>
-	) => {
-		const file = e.target.files?.[0];
-		if (file) {
-			const uploadFormData = new FormData();
-			uploadFormData.append("image", file);
-			try {
-				const { data } = await uploadImage(uploadFormData);
-				const imageUrl = `http://localhost:4000${data.filePath}`;
-				setFormData({ ...formData, coverImage: imageUrl });
-			} catch (error) {
-				console.error("Error uploading cover image:", error);
-				const toast = document.createElement("div");
-				toast.className = "toast toast-top toast-center";
-				toast.innerHTML = `<div class="alert alert-error"><span>Error uploading cover image.</span></div>`;
-				document.body.appendChild(toast);
-				setTimeout(() => toast.remove(), 3000); // Remove toast after 3 seconds
-			}
+	const handleCoverImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+		if (e.target.files && e.target.files[0]) {
+			setCoverImageFile(e.target.files[0]);
 		}
 	};
 
@@ -501,7 +497,7 @@ const PostForm: React.FC<PostFormProps> = ({ post, onSave, onCancel }) => {
 						/>
 						{formData.coverImage && (
 							<img
-								src={formData.coverImage}
+								src={formData.coverImage as string}
 								alt="Cover"
 								className="mt-2 w-32 h-32 object-cover rounded"
 							/>

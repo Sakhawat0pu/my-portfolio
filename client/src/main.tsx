@@ -1,13 +1,16 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.tsx'
-import { ThemeProvider } from './context/ThemeContext.tsx'
+import { ThemeProvider } from "./context/ThemeContext.tsx";
+import "./index.css";
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <ThemeProvider>
-      <App />
-    </ThemeProvider>
-  </StrictMode>,
-)
+import "highlight.js/styles/github-dark.css";
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App.tsx";
+import "./index.css";
+
+ReactDOM.createRoot(document.getElementById("root")!).render(
+	<React.StrictMode>
+		<ThemeProvider>
+			<App />
+		</ThemeProvider>
+	</React.StrictMode>
+);
